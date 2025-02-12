@@ -17,6 +17,18 @@ import (
 
 const testCount = 5
 
+func TestNewValueFromKey(t *testing.T) {
+	t.Parallel()
+	type thingy struct {
+		key string
+	}
+	m := refcountmap.NewValueFromKey(func(k string) thingy {
+		return thingy{key: k}
+	})
+	v, _, _ := m.Get("foo")
+	assert.Equal(t, "foo", v.key)
+}
+
 func TestRefCountMapNonThreaded(t *testing.T) {
 	t.Parallel()
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))

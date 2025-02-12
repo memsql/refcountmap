@@ -19,7 +19,7 @@ type counter[K comparable, V any] struct {
 // New values are created as needed.
 type Map[K comparable, V any] struct {
 	gwrap.SyncMap[K, *counter[K, V]]
-	makeNew func() V
+	makeNew func(K) V
 }
 
 // New will use the newValue function to create
@@ -33,6 +33,14 @@ type Map[K comparable, V any] struct {
 //
 //	m := refcountmap.New[keyType](func() valueType { return &valueType{} })
 func New[K comparable, V any](newValue func() V) *Map[K, V] {
+	return NewValueFromKey[K, V](func(_ K) V { return newValue() })
+}
+
+// NewValueFromKey will use the newValue function to create
+// new values when one does not already exist. Some return
+// values from newValue() may be discarded without ever being
+// returned.
+func NewValueFromKey[K comparable, V any](newValue func(K) V) *Map[K, V] {
 	return &Map[K, V]{
 		makeNew: newValue,
 	}
@@ -81,7 +89,7 @@ func (m *Map[K, V]) Get(k K) (value V, release func(), loaded bool) {
 	}
 	newV := &counter[K, V]{
 		k:          k,
-		value:      m.makeNew(),
+		value:      m.makeNew(k),
 		m:          m,
 		references: 1, // allocate() not called on this counter
 	}
