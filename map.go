@@ -103,6 +103,7 @@ func (m *Map[K, V]) Get(k K) (value V, release func(), loaded bool) {
 	// could be another counter allocated and released before the loop
 	// comes around again.
 	for {
+		//nolint:staticcheck // could simplify to m.LoadOrStore, don't want to
 		v, loaded = m.SyncMap.LoadOrStore(k, newV)
 		if loaded && !v.allocate() {
 			continue
