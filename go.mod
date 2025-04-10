@@ -1,6 +1,6 @@
 module github.com/memsql/refcountmap
 
-go 1.18
+go 1.20
 
 require (
 	github.com/muir/gwrap v0.3.0
