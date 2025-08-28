@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/muir/gwrap v0.4.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
